@@ -30,9 +30,7 @@ This project presents a framework for simulating and controlling a resilient, he
 │ ├── networks.py # Main network architectures (STGAT, Actor, Critic)
 │ ├── buffer.py # On-policy replay buffer
 │ ├── ..._ablationX.py # Agents and networks for ablation studies
-│ └── ..._baseline.py # Agents and networks for baseline models
-├── logs/ # Directory for training logs (.csv files)
-├── models/ # Directory for saved model weights (.pth files)
+│ └── ..._baseline.py # Agents and networks for baseline mode
 ├── config.py # 📜 Central configuration file for all parameters
 ├── train.py # ⚡️ Main training script for the STGAT-MAPPO model
 ├── train_ablation1.py # Training script for S-GAT-MAPPO
@@ -52,8 +50,8 @@ This project presents a framework for simulating and controlling a resilient, he
 
 1. **Clone the repository:**
 ```bash
-git clone <your-repo-url>
-cd <your-repo-name>
+git clone https://github.com/NoWall-572/STAR-Net.git
+cd STAR-Net
 ```
 
 2. **Create a virtual environment (recommended):**

@@ -1,22 +1,41 @@
-# 🧠 MARL Core Module
+# 🧠 MARL Algorithms & Networks
 
-This directory houses the core components of the Multi-Agent Reinforcement Learning algorithms used in this project. It includes the agent logic, the neural network architectures, and the data storage utilities.
+This directory houses the implementations of the Reinforcement Learning agents, neural network architectures, and experience replay buffers.
 
----
+### 🌟 Our Method (STGAT-MAPPO)
+*   **`mappo_agent.py`**: The core agent implementation using Multi-Agent PPO with centralized training.
+*   **`networks.py`**: Defines the **STGATEncoder** (Spatio-Temporal Graph Attention Network) and the Actor/Centralized Critic networks.
+*   **`buffer.py`**: An on-policy replay buffer designed for PPO updates.
 
-### Core Components
+### 📉 Baselines
+We implement several SOTA benchmarks for comparison:
 
-*   📄 **`mappo_agent.py`**  
-    The primary implementation of our main agent, which uses the **STGAT-MAPPO** algorithm. It defines how the agent chooses actions, processes observations through the encoder, and updates its policies using a centralized critic.
+1.  **MLP-MAPPO (No Graph Structure)**
+    *   `mappo_agent_mlp.py`: MAPPO agent using simple MLP encoders.
+    *   `networks_baseline.py`: Defines the `MLPEncoder` which treats observations as flat vectors.
 
-*   📄 **`networks.py`**  
-    Contains the neural network architectures for the main STGAT-MAPPO model. This includes the `STGATEncoder` (which combines GAT and GRU), the `Actor` network, and the centralized `Critic` network.
+2.  **QMIX (Value-Based)**
+    *   `qmix_agent.py`: Implementation of the QMIX algorithm.
+    *   `networks_qmix.py`: Contains the `QMIX_RNNAgent` and the `MixingNetwork`.
+    *   `replay_buffer.py`: An off-policy episodic replay buffer for QMIX.
 
-*   📄 **`buffer.py`**  
-    Implements the `OnPolicyBuffer`, a replay buffer specifically designed for on-policy algorithms like PPO. It stores trajectories of experience collected by the agents for policy updates.
+3.  **IPPO (Independent PPO)**
+    *   `ippo_agent.py`: Independent PPO agents with no centralized critic.
+    *   `networks_ippo.py`: Defines the `DecentralizedCritic`.
 
-*   📄 **`mappo_agent_mlp.py` & `networks_baseline.py`**  
-    These files define the **MLP-MAPPO** baseline. `MLPEncoder` replaces the GNN with a simple Multi-Layer Perceptron, serving as a key baseline to validate the effectiveness of graph modeling.
+4.  **MADDPG (Actor-Critic)**
+    *   `maddpg_agent.py`: Multi-Agent DDPG implementation with Gumbel-Softmax for discrete actions.
+    *   `networks_maddpg.py`: Actor and Critic networks for MADDPG.
+    *   `buffer_maddpg.py`: Replay buffer tailored for MADDPG.
 
-*   📄 **`mappo_agent_ablationX.py` & `networks_ablationX.py`**  
-    A series of files supporting the ablation studies. Each pair defines a modified agent and/or network architecture to isolate and test the contribution of a specific component of our main model (e.g., removing temporal modeling, replacing GAT with GCN).
+### 🧪 Ablation Studies
+Variants of our main model to test specific components:
+
+*   **Ablation 1 (No Temporal Modeling):**
+    *   `mappo_agent_ablation1.py` & `networks_ablation1.py`: Uses **S-GAT** (Spatial GAT only), removing the GRU.
+*   **Ablation 2 (No Attention Mechanism):**
+    *   `mappo_agent_ablation2.py` & `networks_ablation2.py`: Replaces GAT with **GCN** (Graph Convolution), keeping the GRU.
+*   **Ablation 4 (No Temporal & No Attention):**
+    *   `mappo_agent_ablation4.py` & `networks_ablation4.py`: Uses **S-GCN** (Spatial GCN only), removing both GAT and GRU.
+*   **Ablation 5 (No Heterogeneity Features):**
+    *   Uses the standard `mappo_agent.py` but is trained with input features that exclude agent type indicators.

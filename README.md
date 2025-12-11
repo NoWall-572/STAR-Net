@@ -51,10 +51,7 @@ This project presents a framework for simulating and controlling a resilient, he
 ### ⚙️ Setup
 
 1. **Clone the repository:**
-```bash
-git clone <your-repo-url>
-cd <your-repo-name>
-```
+
 
 2. **Create a virtual environment (recommended):**
 ```bash

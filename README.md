@@ -50,7 +50,7 @@ This project presents a framework for simulating and controlling a resilient, he
 
 ### ⚙️ Setup
 
-1. **Clone the repository:**
+1. **Clone the repository**
 
 
 2. **Create a virtual environment (recommended):**

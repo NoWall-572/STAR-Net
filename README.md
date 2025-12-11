@@ -1,18 +1,8 @@
-# 🚀 Resilient Air-Ground Networking with STGAT-MAPPO
+# 🚀 Resilient Air-Ground Networking via STGAT-MAPPO
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)![PyTorch](https://img.shields.io/badge/PyTorch-1.12%2B-orange?logo=pytorch)![License](https://img.shields.io/badge/License-MIT-green)
 
-This project presents a framework for simulating and controlling a resilient, heterogeneous air-ground network using Multi-Agent Reinforcement Learning (MARL). The core of our solution is **STGAT-MAPPO**, an algorithm where each agent (UAV or UGV) uses a Spatio-Temporal Graph Attention Network (STGAT) to model the complex network dynamics and learns collaborative policies via Multi-Agent Proximal Policy Optimization (MAPPO).
-
----
-
-### ✅ Key Features
-
-* **Heterogeneous Multi-Agent System**: Simulates a network of both Unmanned Aerial Vehicles (UAVs) and Unmanned Ground Vehicles (UGVs), each with distinct physical and communication characteristics.
-* **Dynamic Network Topology**: The communication graph evolves based on agent mobility, signal propagation physics, and potential link disruptions.
-* **Graph-Based MARL**: Employs a powerful STGAT encoder to process local network topology and learn predictive, robust communication strategies.
-* **Adversarial & Environmental Scenarios**: The environment, configurable in `config.py`, can simulate threats like jammers, wind, and rain to test network resilience.
-* **Comprehensive Evaluation Suite**: Includes scripts for training, plotting results, evaluating final models, comparing different agents, and running specific attack simulations.
+This project implements a **Resilient Heterogeneous Air-Ground Network** framework using Multi-Agent Reinforcement Learning. It features a novel **STGAT-MAPPO** algorithm that combines Spatio-Temporal Graph Attention Networks with Multi-Agent PPO to maintain connectivity and throughput under dynamic environments and adversarial attacks.
 
 ---
 
@@ -20,141 +10,112 @@ This project presents a framework for simulating and controlling a resilient, he
 
 ```
 /
-├── environment/ # Simulation environment module
-│ ├── env.py # Main environment class
-│ ├── entities.py # UAV and UGV classes
-│ ├── channel_models.py # Wireless propagation physics
-│ └── threats.py # Jammer and environmental threats
-├── marl/ # MARL algorithm module
-│ ├── mappo_agent.py # Main STGAT-MAPPO agent
-│ ├── networks.py # Main network architectures (STGAT, Actor, Critic)
-│ ├── buffer.py # On-policy replay buffer
-│ ├── ..._ablationX.py # Agents and networks for ablation studies
-│ └── ..._baseline.py # Agents and networks for baseline mode
-├── config.py # 📜 Central configuration file for all parameters
-├── train.py # ⚡️ Main training script for the STGAT-MAPPO model
-├── train_ablation1.py # Training script for S-GAT-MAPPO
-├── train_ablation2.py # Training script for ST-GCN-MAPPO
-├── train_ablation3_mlp.py # Training script for MLP-MAPPO (baseline)
-├── train_ablation4.py # Training script for S-GCN-MAPPO
-├── train_ablation5.py # Training script for STGAT-MAPPO without heterogeneity features
-├── evaluate.py # 📊 Script to evaluate a trained model
-├── run_comparison.py # 🤖 Script to compare performance across different agents
-├── run_node_attack.py # 💥 Script to simulate a targeted node attack and test self-healing
-└── plotter.py # 📈 Script to generate performance plots from log files
+├── environment/ # Simulation environment (Physics, UAVs, UGVs, Channel Models)
+├── marl/ # Algorithm implementations (Agents, Networks, Buffers)
+│
+├── config.py # ⚙️ Main configuration (Env parameters, Hyperparameters)
+├── config_qmix.py # ⚙️ Specific configuration overrides for QMIX
+├── generate_scenarios.py # 🛠 Utility to generate fixed evaluation scenarios
+│
+├── train.py # 🔥 Train MAIN Model (STGAT-MAPPO)
+│
+├── train_mlp.py # 📉 Train Baseline: MLP-MAPPO
+├── train_ippo.py # 📉 Train Baseline: IPPO
+├── train_maddpg.py # 📉 Train Baseline: MADDPG
+├── train_qmix.py # 📉 Train Baseline: QMIX
+│
+├── train_ablation1.py # 🧪 Train Ablation: S-GAT (No Time)
+├── train_ablation2.py # 🧪 Train Ablation: ST-GCN (GCN+GRU)
+├── train_ablation4.py # 🧪 Train Ablation: S-GCN (GCN only)
+├── train_ablation5.py # 🧪 Train Ablation: No Heterogeneity Features
+│
+├── evaluate.py # 📊 Evaluate a single trained model
+├── run_comparison.py # 🆚 Compare multiple models (Baselines or Ablations)
+├── run_node_attack.py # 💥 Test resilience against node destruction
+│
+├── logger.py # Logging utility
+├── plotter.py # Plotting utility
+└── reward_normalizer.py # Reward normalization utility
 ```
 
 ---
 
-### ⚙️ Setup
+### ⚡️ Quick Start
 
-1. **Clone the repository:**
-```bash
-git clone https://github.com/NoWall-572/STAR-Net.git
-cd STAR-Net
-```
-
-2. **Create a virtual environment (recommended):**
-```bash
-python -m venv venv
-source venv/bin/activate # On Windows, use `venv\Scripts\activate`
-```
-
-3. **Install dependencies:**
-This project requires PyTorch and PyTorch Geometric. Please follow their official installation instructions first to ensure compatibility with your CUDA version.
-* [PyTorch Installation Guide](https://pytorch.org/get-started/locally/)
-* [PyTorch Geometric Installation Guide](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html)
-
-Then, install the remaining packages:
+#### 1. Installation
+Ensure you have Python 3.8+ installed. Install PyTorch and PyTorch Geometric according to your CUDA version, then install the rest:
 ```bash
 pip install numpy networkx matplotlib pandas
 ```
 
----
-
-### ⚡️ Usage Guide
-
-#### 1. Configuration
-
-Before running any script, review **`config.py`**. This is the central hub for tuning the simulation and training parameters. You can easily switch between scenarios, change the number of agents, adjust reward weights, and modify hyperparameters.
-
-```python
-# In config.py
-SCENARIO_TYPE = 'ENVIRONMENTAL' # or 'ADVERSARIAL'
-NUM_UAVS = 8
-NUM_UGVS = 4
-CURRENT_REWARD_WEIGHTS = REWARD_WEIGHTS_LOITERING # or REWARD_WEIGHTS_RECON, etc.
+#### 2. Generate Scenarios (Important!)
+Before running comparisons or attacks, generate a fixed set of test scenarios to ensure fair evaluation:
+```bash
+python generate_scenarios.py
 ```
 
-#### 2. Training
+#### 3. Training Models
 
-All training scripts leverage multiprocessing for efficient data collection. They will automatically create new directories for logs and models (e.g., `logs_ablation1/`, `models_ablation1/`) to avoid conflicts.
-
-* **Train the main STGAT-MAPPO model:**
+**👉 Train Our Proposed Method (STGAT-MAPPO):**
 ```bash
 python train.py
 ```
 
-* **Run Ablation Studies:**
+**👉 Train Baselines:**
 ```bash
-# Ablation 1: S-GAT-MAPPO (Removes GRU)
-python train_ablation1.py
-
-# Ablation 2: ST-GCN-MAPPO (Replaces GAT with GCN, keeps GRU)
-python train_ablation2.py
-
-# Ablation 4: S-GCN-MAPPO (Replaces GAT with GCN, removes GRU)
-python train_ablation4.py
-
-# Ablation 5: STGAT-MAPPO (Removes agent type features)
-python train_ablation5.py
+python train_mlp.py # MLP-MAPPO (No Graph Structure)
+python train_ippo.py # IPPO (No Centralized Critic)
+python train_maddpg.py # MADDPG (Actor-Critic)
+python train_qmix.py # QMIX (Value-Based)
 ```
 
-* **Run Baseline Models:**
+**👉 Train Ablation Studies:**
 ```bash
-# Baseline: MLP-MAPPO (Removes all graph structure)
-python train_ablation3_mlp.py
+python train_ablation1.py # Ablation 1: Remove Temporal (GRU)
+python train_ablation2.py # Ablation 2: GAT -> GCN
+python train_ablation4.py # Ablation 4: GAT+GRU -> GCN only
+python train_ablation5.py # Ablation 5: Remove Agent Type Features
 ```
 
-#### 3. Plotting Training Progress
+*Note: Logs will be saved to `logs/` (or `logs_mlp`, `logs_qmix`, etc.) and models to `models/` automatically during runtime.*
 
-To visualize the results, run the plotter script. It automatically finds the latest `.csv` log in the specified directory and saves performance plots as `.png` images. The script has been updated to save files instead of displaying them, making it suitable for server use.
-
+#### 4. Visualization
+Plot training curves from the generated CSV logs:
 ```bash
-# To plot results from the main training run
 python plotter.py
-# (It will check the default 'logs' directory)
+# Note: You may need to edit the default log directory path in the script to plot different models.
 ```
-*Note: You may need to edit the default path in `plotter.py` if you wish to plot logs from ablation directories like `logs_ablation1`.*
 
-#### 4. Evaluating a Trained Model
+---
 
-After training, you can evaluate the performance of a specific saved model. Open `evaluate.py` and set the `MODEL_EPISODE_TO_LOAD` and model directory variables to the desired values.
+### 📊 Evaluation & Comparison
 
-```python
-# In evaluate.py
-MODEL_EPISODE_TO_LOAD = 1400 # Change this value
-actor_path = f'./models/actor_{MODEL_EPISODE_TO_LOAD}.pth' # Change model directory if needed```
-Then run the script:
+#### Compare Performance
+Use `run_comparison.py` to benchmark different agents. You can toggle between `BASELINE` mode and `ABLATION` mode inside the script.
+```bash
+python run_comparison.py
+```
+*Outputs: Excel report (`.xlsx`) and Pickle file (`.pkl`) with statistical results.*
+
+#### Resilience Test (Node Attack)
+Simulate a scenario where the most critical node is destroyed mid-operation to test self-healing capabilities:
+```bash
+python run_node_attack.py
+```
+
+#### Single Model Evaluation
+To inspect a specific model checkpoint:
+1. Modify `evaluate.py` to point to your desired model path and episode.
+2. Run:
 ```bash
 python evaluate.py
 ```
 
-#### 5. Comparing Agents
+---
 
-To run a head-to-head comparison of the final performance of different agents (e.g., STGAT vs. MLP vs. Heuristic), use the `run_comparison.py` script. You can enable/disable agents and set their model paths directly within the file.
-
-```bash
-python run_comparison.py
-```
-
-#### 6. Simulating a Node Attack
-
-To test the network's resilience and self-healing capabilities, use the `run_node_attack.py` script. It runs the simulation until a stable topology is formed, identifies and removes the most critical node, and observes the network's recovery. You can select the agent to test inside the script.
-
-```bash
-python run_node_attack.py
-```
+### 📝 Configuration
+* **`config.py`**: Controls global settings like `NUM_UAVS`, `NUM_UGVS`, `SCENARIO_TYPE` (Environmental/Adversarial), and PPO hyperparameters.
+* **`config_qmix.py`**: Overrides specific parameters (epsilon greedy, buffer size) for the QMIX algorithm.
 
 ---
 

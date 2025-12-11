@@ -1,19 +1,22 @@
-# 📦 Environment Module
+# 🌍 Environment Module
 
-This directory contains all the components required to build and simulate the dynamic, heterogeneous air-ground network environment. Each file defines a core aspect of the simulation physics and logic.
+This directory contains the core components for simulating the heterogeneous Air-Ground network. It handles the physics, agent dynamics, and environmental interactions.
 
----
+### 📂 File Descriptions
 
-### Core Components
+*   **`env.py`**
+    *   The main simulation class `AirGroundEnv`. It manages the state transitions, calculates the dynamic network topology based on SINR, computes rewards (throughput, connectivity, energy), and provides observations to the agents.
 
-*   📄 **`env.py`**  
-    This is the main environment class (`AirGroundEnv`). It orchestrates the entire simulation, managing agent states, updating the network graph based on communication physics, calculating rewards, and providing observations to the MARL agents.
+*   **`entities.py`**
+    *   Defines the physical agents within the simulation.
+    *   **`UAV`**: Aerial agents with 3D mobility constraints and complex energy consumption models (flight + communication).
+    *   **`UGV`**: Ground agents with 2D mobility and higher payload/power capabilities.
 
-*   📄 **`entities.py`**  
-    Defines the physical agents in the simulation. It contains the base class `BaseNode` and specific implementations for `UAV` (Unmanned Aerial Vehicle) and `UGV` (Unmanned Ground Vehicle), including their unique properties like energy constraints and movement dynamics.
+*   **`channel_models.py`**
+    *   Implements realistic wireless communication physics.
+    *   Includes vectorized calculations for **Path Loss** (Free Space, A2A, A2G, G2G) and fading effects (Rician fading, Rain attenuation).
 
-*   📄 **`channel_models.py`**  
-    Implements the wireless communication channel physics. This includes vectorized functions for calculating Free Space Path Loss (FSPL), Air-to-Air (A2A), Air-to-Ground (A2G), and Ground-to-Ground (G2G) path loss, incorporating effects like Rician fading and rain attenuation.
-
-*   📄 **`threats.py`**  
-    Defines adversarial and environmental threats. This includes the `Jammer` class, which can apply targeted interference, and the `EnvironmentalThreats` class, which simulates effects like wind that impact UAV energy consumption.
+*   **`threats.py`**
+    *   Models external factors affecting the network.
+    *   **`Jammer`**: Simulates adversarial jamming attacks.
+    *   **`EnvironmentalThreats`**: Simulates natural conditions like wind fields affecting UAV energy.

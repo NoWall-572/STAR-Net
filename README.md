@@ -1,6 +1,3 @@
-# STAR-Net
- This repo introduces STAR-Net, a novel framework for spatio-temporal adversarial resilient networking. 
- 
 # 🚀 Resilient Air-Ground Networking with STGAT-MAPPO
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)![PyTorch](https://img.shields.io/badge/PyTorch-1.12%2B-orange?logo=pytorch)![License](https://img.shields.io/badge/License-MIT-green)
